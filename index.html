@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breaking Heart Animation</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffe6f2;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            margin: 0;
+        }
+        
+        .container {
+            text-align: center;
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+        
+        #mainHeart {
+            font-size: 200px;
+            color: red;
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s;
+            z-index: 10;
+            line-height: 1;
+        }
+        
+        #mainHeart:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        
+        .heart-piece {
+            position: absolute;
+            font-size: 50px;
+            color: red;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 5;
+            line-height: 1;
+        }
+        
+        .message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 30px;
+            color: #d63384;
+            opacity: 0;
+            transition: opacity 0.5s;
+            text-align: center;
+            width: 100%;
+        }
+        
+        #sorryMessage {
+            cursor: pointer;
+        }
+        
+        .show {
+            opacity: 1;
+            z-index: 15;
+        }
+        
+        .emoji {
+            font-family: "Segoe UI Emoji", "Apple Color Emoji", sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="mainHeart">&hearts;</div>
+        
+        <!-- Heart pieces -->
+        <div class="heart-piece" id="piece1">&hearts;</div>
+        <div class="heart-piece" id="piece2">&hearts;</div>
+        <div class="heart-piece" id="piece3">&hearts;</div>
+        <div class="heart-piece" id="piece4">&hearts;</div>
+        <div class="heart-piece" id="piece5">&hearts;</div>
+        <div class="heart-piece" id="piece6">&hearts;</div>
+        
+        <!-- Messages -->
+        <div class="message" id="sorryMessage">I'm sorry <span class="emoji">??</span></div>
+        <div class="message" id="loveMessage">I love you so so so soooooooooo much</div>
+    </div>
+
+    <script>
+        const mainHeart = document.getElementById('mainHeart');
+        const sorryMessage = document.getElementById('sorryMessage');
+        const loveMessage = document.getElementById('loveMessage');
+        const pieces = document.querySelectorAll('.heart-piece');
+        let clickCount = 0;
+        
+        // First click - break the heart
+        mainHeart.addEventListener('click', function() {
+            clickCount++;
+            
+            if (clickCount === 1) {
+                // Hide main heart
+                mainHeart.style.opacity = '0';
+                
+                // Show broken pieces with animation
+                pieces.forEach((piece, index) => {
+                    piece.style.opacity = '1';
+                    
+                    // Calculate random positions for pieces
+                    const angle = (index * 60) * (Math.PI / 180);
+                    const distance = 100 + Math.random() * 50;
+                    const x = Math.cos(angle) * distance;
+                    const y = Math.sin(angle) * distance;
+                    const rotation = Math.random() * 360;
+                    
+                    piece.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
+                    piece.style.transition = `all 0.8s cubic-bezier(0.3, 1, 0.7, 1) ${index * 0.1}s`;
+                });
+                
+                // Show sorry message after animation
+                setTimeout(() => {
+                    sorryMessage.classList.add('show');
+                }, 1000);
+            }
+        });
+        
+        // Second click - break the sorry message
+        sorryMessage.addEventListener('click', function() {
+            // Hide sorry message
+            sorryMessage.classList.remove('show');
+            
+            // Animate pieces again
+            pieces.forEach((piece, index) => {
+                // Calculate new random positions
+                const angle = (index * 60 + 30) * (Math.PI / 180);
+                const distance = 150 + Math.random() * 50;
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+                const rotation = Math.random() * 360;
+                
+                piece.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
+                piece.style.transition = `all 0.8s cubic-bezier(0.3, 1, 0.7, 1) ${index * 0.1}s`;
+                piece.style.opacity = '0';
+            });
+            
+            // Show love message
+            setTimeout(() => {
+                loveMessage.classList.add('show');
+                
+                // Reset pieces for potential reuse
+                setTimeout(() => {
+                    pieces.forEach(piece => {
+                        piece.style.transition = 'none';
+                        piece.style.transform = 'translate(0, 0) rotate(0)';
+                    });
+                }, 1000);
+            }, 500);
+        });
+    </script>
+</body>
+</html>
